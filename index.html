@@ -1,18 +1,163 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SZXenn Payment</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel Lengkap</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      font-family: Arial, sans-serif;
+      color: white;
+      padding: 2rem;
+    }
+    .box {
+      background: rgba(0,0,0,0.6);
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 0 12px cyan;
+    }
+    input, button, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: #00b894;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    h2 {
+      text-align: center;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      font-size: 14px;
+    }
+    li {
+      background: rgba(255,255,255,0.05);
+      padding: 6px;
+      margin: 4px 0;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>SZXenn Payment</h1>
-    <p>Click the button below to get your key</p>
-    <button id="generateBtn">Generate Key</button>
-    <div id="keyBox" class="hidden"></div>
+  <div class="box">
+    <h2>Tambah Key</h2>
+    <input id="pw" placeholder="Password Key" />
+    <input id="key" placeholder="Isi Key" />
+    <input type="datetime-local" id="exp" />
+    <button onclick="saveKey()">Simpan Key</button>
   </div>
-  <script src="script.js"></script>
+
+  <div class="box">
+    <h2>Hapus Key</h2>
+    <input id="pwDelete" placeholder="Password Key untuk Dihapus" />
+    <button onclick="deleteKey()">Hapus Key</button>
+  </div>
+
+  <div class="box">
+    <h2>List Semua Key</h2>
+    <ul id="keyList"></ul>
+    <button onclick="loadKeys()">Refresh</button>
+  </div>
+
+  <div class="box">
+    <h2>Ubah Background & Marquee</h2>
+    <input id="bgUrl" placeholder="URL Gambar Background" />
+    <input id="marquee" placeholder="Text Limited Marquee" />
+    <button onclick="saveSettings()">Simpan Perubahan</button>
+  </div>
+
+  <div class="box">
+    <h2>Tracking Pengunjung</h2>
+    <button onclick="trackUser()">Tracking Sekarang</button>
+    <ul id="trackLog"></ul>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCldtyF1JSvBo4eBVBlYdI9pDAwM42Rb4M",
+      authDomain: "rullweb.firebaseapp.com",
+      databaseURL: "https://rullweb-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "rullweb",
+      storageBucket: "rullweb.appspot.com",
+      messagingSenderId: "69407076508",
+      appId: "1:69407076508:web:2f06036ef3785c65bb7d59"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function saveKey() {
+      const pw = document.getElementById("pw").value;
+      const key = document.getElementById("key").value;
+      const exp = document.getElementById("exp").value;
+      if (!pw || !key || !exp) {
+        alert("❌ Lengkapi semua field");
+        return;
+      }
+      db.ref("keys/" + pw).set({ key: key, exp: exp });
+      alert("✅ Key disimpan");
+    }
+
+    function deleteKey() {
+      const pw = document.getElementById("pwDelete").value;
+      if (!pw) return alert("❌ Masukkan password key");
+      db.ref("keys/" + pw).remove().then(() => {
+        alert("✅ Key dihapus");
+      });
+    }
+
+    function loadKeys() {
+      const list = document.getElementById("keyList");
+      list.innerHTML = "Memuat...";
+      db.ref("keys").once("value", snap => {
+        list.innerHTML = "";
+        snap.forEach(keySnap => {
+          const k = keySnap.key;
+          const v = keySnap.val();
+          const exp = v.exp || "-";
+          list.innerHTML += `<li><b>${k}</b>: ${v.key} (exp: ${exp})</li>`;
+        });
+      });
+    }
+
+    function saveSettings() {
+      const bg = document.getElementById("bgUrl").value;
+      const txt = document.getElementById("marquee").value;
+      db.ref("settings").set({ background: bg, marquee: txt });
+      alert("✅ Disimpan");
+    }
+
+    function trackUser() {
+      fetch("https://ipinfo.io/json?token=7004bb2c0f2233")
+        .then(r => r.json())
+        .then(data => {
+          const track = {
+            ip: data.ip,
+            country: data.country,
+            region: data.region,
+            loc: data.loc,
+            org: data.org,
+            date: new Date().toISOString()
+          };
+          const ref = db.ref("visitors").push();
+          ref.set(track);
+          document.getElementById("trackLog").innerHTML += `<li>${track.ip} - ${track.country}, ${track.region}</li>`;
+        });
+    }
+
+    window.onload = loadKeys;
+  </script>
 </body>
 </html>
