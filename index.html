@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Linktree Bobwan</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Font Awesome untuk icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- Background animasi -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Konten utama -->
+  <div class="container crt">
+    <div class="avatar animate-fade-up">
+      <img src="icon.png" alt="Avatar" />
+    </div>
+    <h1 class="animate-fade-up" style="animation-delay: 0.2s">@Bobwan</h1>
+    <p class="animate-fade-up" style="animation-delay: 0.4s">🎮 Gamer | 💻 Dev | Pixel Vibes</p>
+    
+    <div class="links">
+      <a id="music-toggle" class="animate-fade-up" style="animation-delay: 1.7s; cursor: pointer;">
+      <i class="fas fa-music"></i> Music (Play)
+      </a>
+    <div class="links">
+      <a href="warning.html" class="animate-fade-up" style="animation-delay: 1.4s">
+        <i class="fas fa-globe"></i> TOPUP IS HERE
+      </a>
+      <a href="https://github.com/bobwan-pixel" class="animate-fade-up" style="animation-delay: 1s">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+      <a href="https://www.instagram.com/bobwan.id?igsh=YW5mM3BteTAyYno=" class="animate-fade-up" style="animation-delay: 1.2s">
+        <i class="fab fa-instagram"></i> Instagram
+      </a>
+      <a href="https://www.tiktok.com/@bobwan.id?_t=ZS-8yRDwaI3LHR&_r=1" class="animate-fade-up" style="animation-delay: 1.6s">
+        <i class="fab fa-tiktok"></i> TikTok
+      </a>
+      <a href="warning.html" class="animate-fade-up" style="animation-delay: 1.8s">
+        <i class="fab fa-facebook"></i> Facebook
+      </a>
+      <a href="Cs.html" class="animate-fade-up" style="animation-delay: 1.2s">
+        <i class="fas fa-phone"></i> CS
+      </a>
+      <a href="https://github.com/linktree-bobwan?tab=repositories" class="animate-fade-up" style="animation-delay: 2s">
+        <i class="fab fa-js-square"></i> Resource code
+      </a>
+    </div>
+
+    <footer class="animate-flicker">🕹️ Powered by Bobwan - 2025</footer>
+  </div>
+
+  <audio id="click-sound" src="klik.ogg" preload="auto"></audio>
+  <!-- Musik autoplay -->    
+  <audio id="bg-music" src="musik.mp3" preload="auto" loop></audio>
+<script>
+  const bgMusic = document.getElementById("bg-music");
+  const musicToggle = document.getElementById("music-toggle");
+
+  // Event untuk toggle musik
+  musicToggle.addEventListener("click", () => {
+    if (bgMusic.paused) {
+      bgMusic.play().then(() => {
+        musicToggle.innerHTML = '<i class="fas fa-music"></i> Music (Pause)';
+      }).catch(err => {
+        console.warn("Gagal memutar musik:", err);
+      });
+    } else {
+      bgMusic.pause();
+      musicToggle.innerHTML = '<i class="fas fa-music"></i> Music (Play)';
+    }
+  });
+</script>
+  <script src="script.js"></script>
+</body>
+</html>
